@@ -13,14 +13,14 @@ except Exception as e:
     exit(1)
 
 # 2. 定义列的处理方式
-# 【修改点1】：加入了之前遗漏的 no2_concentration_ppb
+
 log_transform_columns = [
     'total_factor_productivity',
     'gdp_per_capita_ppp',
     'gdp_current_usd',
     'pm2_5_concentration_ugm3',
     'surface_ozone_ppb',
-    'no2_concentration_ppb',       # 补上遗漏的列
+    'no2_concentration_ppb',  
     'total_precipitation_mm',
     'agricultural_co2_emissions_kt',
     'total_co2_emissions_kt',
@@ -28,9 +28,9 @@ log_transform_columns = [
     'per_capita_health_expenditure_usd'
 ]
 
-# 【修改点2】：将温度数据移动到了 Z-score 列表中
+
 z_score_columns = [
-    'temperature_2m_celsius',      # 建议：温度适合标准化，而不是对数化
+    'temperature_2m_celsius',
     'leaf_area_index_high_vegetation',
     'snow_depth_cm',
     'snowfall_mm',
@@ -78,7 +78,7 @@ scaler = StandardScaler()
 for col in z_score_columns:
     if col in df.columns:
         # 4.1 异常值检测与截断 (Winsorization)
-        # 你的逻辑是对的：先截断极端值，再标准化，这能让均值和方差更具代表性
+
         z_scores_temp = np.abs(stats.zscore(df[col]))
         outlier_count = (z_scores_temp > 3).sum()
         
@@ -99,7 +99,7 @@ numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
 processed_cols = set(log_transform_columns + z_score_columns + ['year']) # 假设year不处理
 remaining = [c for c in numeric_cols if c not in processed_cols]
 if remaining:
-    print(f"\n【注意】以下数值列未被处理（确认是否故意保留）：{remaining}")
+    print(f"\n：{remaining}")
 
 # 6. 保存
 output_path = "transformed_data_final.csv"
